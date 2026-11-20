@@ -32,6 +32,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+export default app;
 const PORT = Number(process.env.PORT) || 3000;
 
 app.set('trust proxy', 1);
@@ -1278,5 +1279,7 @@ async function startServer() {
     console.log(`Clinique EVA server listening on http://0.0.0.0:${PORT}`);
   });
 }
-
-startServer();
+// startServer is exported so it can be invoked separately
+// (e.g., by start.ts for local development, or omitted entirely
+// when Vercel uses the exported app as a serverless function)
+export { startServer };
