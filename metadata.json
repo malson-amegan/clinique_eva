@@ -1,0 +1,6 @@
+{
+  "name": "Clinique EVA",
+  "description": "Plateforme digitale de la Clinique EVA à Agoè Démakpoé, Lomé, Togo : présentation de la clinique, spécialités médicales, prévention, prise de rendez-vous en ligne, espace patient et back-office.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
