@@ -1275,11 +1275,12 @@ async function startServer() {
     });
   }
 
-  httpServer.listen(PORT, '0.0.0.0', () => {
+httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`Clinique EVA server listening on http://0.0.0.0:${PORT}`);
   });
 }
+
 // startServer is exported so it can be invoked separately
 // (e.g., by start.ts for local development, or omitted entirely
 // when Vercel uses the exported app as a serverless function)
-export { startServer };
+export { app, startServer };

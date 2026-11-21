@@ -1,3 +1,11 @@
 {
-  "runtime": "nodejs20"
+  "runtime": "nodejs20",
+  "framework": "vite",
+  "functions": {
+    "server.js": {
+      "runtime": "nodejs20",
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  }
 }
