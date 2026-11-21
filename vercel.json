@@ -1,6 +1,5 @@
 {
   "runtime": "nodejs20",
-  "framework": "vite",
   "functions": {
     "server.js": {
       "runtime": "nodejs20",
