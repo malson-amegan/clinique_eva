@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { AuthProvider } from './context/AuthContext';
 import { Navbar, type NavDestination } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -14,6 +15,8 @@ import { PatientPortalView } from './views/PatientPortalView';
 import { AdminDashboardView } from './views/AdminDashboardView';
 import type { PublicHomeData } from './types';
 import { CLINIC_INFO } from './lib/clinicInfo';
+
+const PAGE_EASE = [0.22, 1, 0.36, 1] as const;
 
 function resolvePathToState(pathname: string): {
   page: NavDestination;
@@ -77,21 +80,26 @@ function MobileActionBar({
   onBook: () => void;
 }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-2 gap-3 border-t border-[#83A99A]/25 bg-white/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(23,75,67,0.08)] backdrop-blur lg:hidden">
+    <motion.div
+      initial={{ y: 24, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.35, ease: PAGE_EASE }}
+      className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-2 gap-3 border-t border-[#83A99A]/25 bg-white/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(23,75,67,0.08)] backdrop-blur lg:hidden"
+    >
       <a
         href={`tel:${CLINIC_INFO.phoneLink}`}
-        className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#174B43] px-4 text-sm font-semibold text-[#174B43]"
+        className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#174B43] px-4 text-sm font-semibold text-[#174B43] active:scale-[0.98]"
       >
         Appeler
       </a>
       <button
         type="button"
         onClick={onBook}
-        className="min-h-11 rounded-full bg-[#174B43] px-4 text-sm font-semibold text-white"
+        className="min-h-11 rounded-full bg-[#174B43] px-4 text-sm font-semibold text-white active:scale-[0.98]"
       >
         Demander un rendez-vous
       </button>
-    </div>
+    </motion.div>
   );
 }
 
@@ -223,6 +231,8 @@ function CliniqueEvaShell() {
     }, 120);
   };
 
+  const pageKey = `${currentPage}-${selectedSpecialtySlug ?? ''}-${selectedArticleSlug ?? ''}`;
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F8F6] text-[#233B4A]">
       {mapsQuotaExceeded && (
@@ -246,14 +256,24 @@ function CliniqueEvaShell() {
 
       <main className="flex-1 pb-20 lg:pb-0">
         {loadingPublic ? (
-          <div className="max-w-7xl mx-auto px-4 py-24 text-center">
+          <div className="max-w-7xl mx-auto px-4 py-24 flex flex-col items-center justify-center gap-3 text-center">
+            <motion.span
+              animate={{ scale: [1, 1.25, 1], opacity: [0.6, 1, 0.6] }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+              className="h-3 w-3 rounded-full bg-[#174B43]"
+            />
             <p className="text-sm font-medium text-[#174B43]">
               Chargement de la plateforme Clinique EVA…
             </p>
           </div>
         ) : loadError || !publicData ? (
           <div className="max-w-xl mx-auto px-4 py-20 text-center">
-            <div className="bg-white rounded-2xl border border-[#83A99A]/30 p-8">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: PAGE_EASE }}
+              className="bg-white rounded-2xl border border-[#83A99A]/30 p-8"
+            >
               <p className="text-base font-semibold text-[#174B43]">
                 Service momentanément indisponible
               </p>
@@ -265,94 +285,102 @@ function CliniqueEvaShell() {
               >
                 Réessayer
               </button>
-            </div>
+            </motion.div>
           </div>
         ) : (
-          <>
-            {currentPage === 'accueil' && (
-              <HomeView
-                data={publicData}
-                mapsApiKey={mapsApiKey}
-                onNavigate={(p) => navigate(p)}
-                onSelectSpecialty={(slug) =>
-                  navigate('specialites', { specialtySlug: slug })
-                }
-                onBookSpecialty={handleBookSpecialty}
-                onRequestPreventionInfo={handleRequestPreventionInfo}
-              />
-            )}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pageKey}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.24, ease: PAGE_EASE }}
+            >
+              {currentPage === 'accueil' && (
+                <HomeView
+                  data={publicData}
+                  mapsApiKey={mapsApiKey}
+                  onNavigate={(p) => navigate(p)}
+                  onSelectSpecialty={(slug) =>
+                    navigate('specialites', { specialtySlug: slug })
+                  }
+                  onBookSpecialty={handleBookSpecialty}
+                  onRequestPreventionInfo={handleRequestPreventionInfo}
+                />
+              )}
 
-            {currentPage === 'clinique' && (
-              <ClinicPresentationView
-                institutional={publicData.institutional}
-                gallery={publicData.gallery}
-                onBook={() => handleBookSpecialty()}
-                onContact={() => navigate('contact')}
-              />
-            )}
+              {currentPage === 'clinique' && (
+                <ClinicPresentationView
+                  institutional={publicData.institutional}
+                  gallery={publicData.gallery}
+                  onBook={() => handleBookSpecialty()}
+                  onContact={() => navigate('contact')}
+                />
+              )}
 
-            {currentPage === 'specialites' && (
-              <SpecialtiesView
-                specialties={publicData.specialties}
-                selectedSlug={selectedSpecialtySlug}
-                onSelectSlug={(slug) =>
-                  navigate('specialites', { specialtySlug: slug })
-                }
-                onBookSpecialty={(slug) => handleBookSpecialty(slug)}
-              />
-            )}
+              {currentPage === 'specialites' && (
+                <SpecialtiesView
+                  specialties={publicData.specialties}
+                  selectedSlug={selectedSpecialtySlug}
+                  onSelectSlug={(slug) =>
+                    navigate('specialites', { specialtySlug: slug })
+                  }
+                  onBookSpecialty={(slug) => handleBookSpecialty(slug)}
+                />
+              )}
 
-            {currentPage === 'services' && (
-              <ServicesPreventionView
-                initialTopic={preventionTopic}
-                onBookGeneral={() => handleBookSpecialty('medecine-generale')}
-              />
-            )}
+              {currentPage === 'services' && (
+                <ServicesPreventionView
+                  initialTopic={preventionTopic}
+                  onBookGeneral={() => handleBookSpecialty('medecine-generale')}
+                />
+              )}
 
-            {currentPage === 'rendez-vous' && (
-              <AppointmentView
-                specialties={publicData.specialties}
-                preselectedSpecialty={bookingSpecialtySlug}
-              />
-            )}
+              {currentPage === 'rendez-vous' && (
+                <AppointmentView
+                  specialties={publicData.specialties}
+                  preselectedSpecialty={bookingSpecialtySlug}
+                />
+              )}
 
-            {currentPage === 'conseils' && (
-              <BlogView
-                articles={publicData.articles}
-                selectedSlug={selectedArticleSlug}
-                onSelectSlug={(slug) =>
-                  navigate('conseils', { articleSlug: slug })
-                }
-                onBook={() => handleBookSpecialty()}
-              />
-            )}
+              {currentPage === 'conseils' && (
+                <BlogView
+                  articles={publicData.articles}
+                  selectedSlug={selectedArticleSlug}
+                  onSelectSlug={(slug) =>
+                    navigate('conseils', { articleSlug: slug })
+                  }
+                  onBook={() => handleBookSpecialty()}
+                />
+              )}
 
-            {currentPage === 'avis' && (
-              <ReviewsView reviews={publicData.reviews} />
-            )}
+              {currentPage === 'avis' && (
+                <ReviewsView reviews={publicData.reviews} />
+              )}
 
-            {currentPage === 'faq' && (
-              <FaqView
-                faqs={publicData.faqs}
-                onContact={() => navigate('contact')}
-              />
-            )}
+              {currentPage === 'faq' && (
+                <FaqView
+                  faqs={publicData.faqs}
+                  onContact={() => navigate('contact')}
+                />
+              )}
 
-            {currentPage === 'contact' && (
-              <ContactView mapsApiKey={mapsApiKey} />
-            )}
+              {currentPage === 'contact' && (
+                <ContactView mapsApiKey={mapsApiKey} />
+              )}
 
-            {currentPage === 'espace-patient' && (
-              <PatientPortalView
-                onBook={() => handleBookSpecialty()}
-                onGoAdmin={() => navigate('admin')}
-              />
-            )}
+              {currentPage === 'espace-patient' && (
+                <PatientPortalView
+                  onBook={() => handleBookSpecialty()}
+                  onGoAdmin={() => navigate('admin')}
+                />
+              )}
 
-            {currentPage === 'admin' && (
-              <AdminDashboardView onPublicDataChanged={fetchPublicData} />
-            )}
-          </>
+              {currentPage === 'admin' && (
+                <AdminDashboardView onPublicDataChanged={fetchPublicData} />
+              )}
+            </motion.div>
+          </AnimatePresence>
         )}
       </main>
 
@@ -366,8 +394,10 @@ function CliniqueEvaShell() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <CliniqueEvaShell />
-    </AuthProvider>
+    <MotionConfig reducedMotion="user">
+      <AuthProvider>
+        <CliniqueEvaShell />
+      </AuthProvider>
+    </MotionConfig>
   );
 }

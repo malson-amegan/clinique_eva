@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import {
   ArrowRight,
   ChevronDown,
@@ -21,6 +22,9 @@ import clinicLogo from '../assets/images/logo-clinique-eva.jpeg';
 import { CLINIC_INFO, CLINIC_HOURS_SUMMARY } from '../lib/clinicInfo';
 import type { NavDestination } from '../components/Navbar';
 import type { PublicHomeData } from '../types';
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+const VIEWPORT = { once: true, amount: 0.12 } as const;
 
 interface HomeViewProps {
   data: PublicHomeData;
@@ -53,44 +57,75 @@ export function HomeView({
 
   return (
     <div>
+      {/* HERO */}
       <section className="relative isolate overflow-hidden bg-[#F4F1E8]">
-        <div
+        <motion.div
           aria-hidden="true"
+          animate={{ scale: [1, 1.04, 1] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute -right-40 -top-44 h-[34rem] w-[34rem] rounded-full border border-[#174B43]/10"
         />
-        <div
+        <motion.div
           aria-hidden="true"
+          animate={{ scale: [1, 0.96, 1] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute -right-24 -top-28 h-[25rem] w-[25rem] rounded-full border border-[#174B43]/10"
         />
+
         <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-12 lg:gap-x-8 lg:gap-y-4 lg:px-8 lg:py-16">
           <div className="relative z-10 lg:col-span-6 lg:row-start-1">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#174B43]/15 bg-white/70 px-3.5 py-2 text-xs font-semibold tracking-wide text-[#174B43] shadow-sm">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, ease: EASE }}
+              className="inline-flex items-center gap-2 rounded-full border border-[#174B43]/15 bg-white/70 px-3.5 py-2 text-xs font-semibold tracking-wide text-[#174B43] shadow-sm"
+            >
               <span className="h-2 w-2 rounded-full bg-[#B87957]" />
               CLINIQUE DE PROXIMITÉ · LOMÉ, TOGO
-            </div>
+            </motion.div>
 
-            <h1 className="mt-7 max-w-2xl text-[clamp(3.35rem,8vw,6.2rem)] font-semibold leading-[0.94] tracking-[-0.065em] text-[#174B43]">
+            <motion.h1
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.08, ease: EASE }}
+              className="mt-7 max-w-2xl text-[clamp(3.35rem,8vw,6.2rem)] font-semibold leading-[0.94] tracking-[-0.065em] text-[#174B43]"
+            >
               La santé,
               <br />
               <span className="font-normal italic text-[#A65F48]">
                 avec attention.
               </span>
-            </h1>
+            </motion.h1>
 
-            <p className="mt-6 max-w-xl text-base leading-7 text-[#233B4A]/80 sm:text-lg sm:leading-8">
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.16, ease: EASE }}
+              className="mt-6 max-w-xl text-base leading-7 text-[#233B4A]/80 sm:text-lg sm:leading-8"
+            >
               À Agoè Démakpoé, la Clinique EVA vous accueille avec une offre de
               soins de proximité et une équipe attentive à votre parcours.
-            </p>
+            </motion.p>
           </div>
 
-          <div className="relative mx-auto w-full max-w-xl lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 lg:max-w-none">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96, y: 18 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.14, ease: EASE }}
+            className="relative mx-auto w-full max-w-xl lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 lg:max-w-none"
+          >
             <div
               aria-hidden="true"
               className="absolute -bottom-8 -left-8 h-36 w-36 rounded-full bg-[#D9A17F]/35 blur-2xl"
             />
-            <div className="absolute -right-3 top-8 z-10 hidden rounded-full border border-white/70 bg-[#F8F6EF]/90 px-4 py-2.5 text-xs font-semibold text-[#174B43] shadow-lg backdrop-blur sm:block lg:-right-5">
+            <motion.div
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute -right-3 top-8 z-10 hidden rounded-full border border-white/70 bg-[#F8F6EF]/90 px-4 py-2.5 text-xs font-semibold text-[#174B43] shadow-lg backdrop-blur sm:block lg:-right-5"
+            >
               Votre repère santé à Lomé
-            </div>
+            </motion.div>
+
             <div className="relative aspect-[1.7] overflow-hidden rounded-[2rem] border-[6px] border-white shadow-[0_28px_70px_rgba(35,59,74,0.18)] sm:aspect-[1.8] lg:aspect-[0.88] lg:rounded-[48%_48%_2rem_2rem]">
               <picture className="block h-full w-full">
                 <source
@@ -104,7 +139,12 @@ export function HomeView({
                 />
               </picture>
               <div className="absolute inset-0 bg-gradient-to-t from-[#102d29]/65 via-transparent to-[#102d29]/5" />
-              <div className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6">
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.35, ease: EASE }}
+                className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6"
+              >
                 <div className="flex items-center gap-3 rounded-2xl border border-white/60 bg-[#FBF9F3]/95 p-3 shadow-xl backdrop-blur-md sm:gap-4 sm:p-4">
                   <img
                     src={clinicLogo}
@@ -122,40 +162,56 @@ export function HomeView({
                       Derrière le Bar Le Sourire
                     </p>
                   </div>
-                  <a
+                  <motion.a
+                    whileHover={{ scale: 1.07 }}
+                    whileTap={{ scale: 0.94 }}
                     href={CLINIC_INFO.directionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Ouvrir l’itinéraire Google Maps"
-                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#174B43] text-white transition hover:bg-[#A65F48]"
+                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#174B43] text-white transition-colors hover:bg-[#A65F48]"
                   >
                     <ArrowUpRight className="h-4 w-4" />
-                  </a>
+                  </motion.a>
                 </div>
-              </div>
+              </motion.div>
             </div>
-            <div className="absolute -bottom-5 right-5 hidden rounded-full border border-white/70 bg-white/90 px-4 py-2 text-xs font-medium text-[#174B43] shadow-lg backdrop-blur sm:block lg:right-0">
-              Accueil · Soins de proximité
-            </div>
-          </div>
 
-          <div className="relative z-10 lg:col-span-6 lg:row-start-2">
+            <motion.div
+              animate={{ y: [0, 5, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
+              className="absolute -bottom-5 right-5 hidden rounded-full border border-white/70 bg-white/90 px-4 py-2 text-xs font-medium text-[#174B43] shadow-lg backdrop-blur sm:block lg:right-0"
+            >
+              Accueil · Soins de proximité
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.24, ease: EASE }}
+            className="relative z-10 lg:col-span-6 lg:row-start-2"
+          >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onBookSpecialty()}
-                className="group inline-flex min-h-13 items-center justify-center gap-3 rounded-full bg-[#174B43] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(23,75,67,0.18)] transition hover:-translate-y-0.5 hover:bg-[#123c35] hover:shadow-[0_16px_34px_rgba(23,75,67,0.24)]"
+                className="group inline-flex min-h-13 items-center justify-center gap-3 rounded-full bg-[#174B43] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(23,75,67,0.18)] transition-colors hover:bg-[#123c35] hover:shadow-[0_16px_34px_rgba(23,75,67,0.24)] cursor-pointer"
               >
                 Demander un rendez-vous
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </button>
-              <a
+              </motion.button>
+              <motion.a
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 href={`tel:${CLINIC_INFO.phoneLink}`}
-                className="inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-[#174B43]/20 bg-white/60 px-5 py-3.5 text-sm font-semibold text-[#174B43] transition hover:border-[#174B43]/50 hover:bg-white"
+                className="inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-[#174B43]/20 bg-white/60 px-5 py-3.5 text-sm font-semibold text-[#174B43] transition-colors hover:border-[#174B43]/50 hover:bg-white"
               >
                 <Phone className="h-4 w-4" />
                 {CLINIC_INFO.phone}
-              </a>
+              </motion.a>
             </div>
 
             <div className="mt-6 grid max-w-xl grid-cols-1 gap-4 border-t border-[#174B43]/15 pt-5 sm:grid-cols-2 sm:gap-6 lg:mt-7">
@@ -187,10 +243,11 @@ export function HomeView({
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
+      {/* BANDEAU DOMAINES */}
       <section
         aria-label="Spécialités et services de la Clinique EVA"
         className="bg-[#174B43] text-white"
@@ -207,9 +264,13 @@ export function HomeView({
               'Médecine générale',
               'Analyses biomédicales',
               'Imagerie médicale',
-            ].map((service) => (
-              <span
+            ].map((service, idx) => (
+              <motion.span
                 key={service}
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: idx * 0.05, ease: EASE }}
                 className="inline-flex items-center gap-3 whitespace-nowrap text-xs font-medium text-white/90 sm:text-sm"
               >
                 <span
@@ -217,14 +278,20 @@ export function HomeView({
                   className="h-1.5 w-1.5 rounded-full bg-[#D9A17F]"
                 />
                 {service}
-              </span>
+              </motion.span>
             ))}
           </div>
         </div>
       </section>
 
       {/* 1. PRÉSENTATION DE LA CLINIQUE */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={VIEWPORT}
+        transition={{ duration: 0.5, ease: EASE }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-5">
             <p className="text-xs font-semibold text-[#174B43] mb-2">
@@ -246,20 +313,26 @@ export function HomeView({
               <button
                 type="button"
                 onClick={() => onNavigate('clinique')}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-[#174B43] hover:underline cursor-pointer"
+                className="group inline-flex items-center gap-2 text-sm font-semibold text-[#174B43] hover:underline cursor-pointer"
               >
                 Découvrir la présentation complète de la clinique
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* 2. NOS PRINCIPALES SPÉCIALITÉS */}
       <section className="bg-white border-y border-[#83A99A]/20 py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VIEWPORT}
+            transition={{ duration: 0.45, ease: EASE }}
+            className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10"
+          >
             <div>
               <p className="text-xs font-semibold text-[#174B43] mb-2">
                 02. Domaines de soins
@@ -271,18 +344,27 @@ export function HomeView({
             <button
               type="button"
               onClick={() => onNavigate('specialites')}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#174B43] hover:underline whitespace-nowrap shrink-0 cursor-pointer"
+              className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#174B43] hover:underline whitespace-nowrap shrink-0 cursor-pointer"
             >
               Voir tout le catalogue
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </button>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.specialties.map((spec) => (
-              <article
+            {data.specialties.map((spec, index) => (
+              <motion.article
                 key={spec.id}
-                className="bg-[#F5F8F6] rounded-2xl border border-[#83A99A]/25 p-6 flex flex-col justify-between hover:border-[#174B43]/40 transition-colors"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={VIEWPORT}
+                transition={{
+                  duration: 0.45,
+                  delay: Math.min(index * 0.06, 0.3),
+                  ease: EASE,
+                }}
+                whileHover={{ y: -4 }}
+                className="bg-[#F5F8F6] rounded-2xl border border-[#83A99A]/25 p-6 flex flex-col justify-between transition-colors hover:border-[#174B43]/40 hover:shadow-[0_14px_32px_rgba(23,75,67,0.08)]"
               >
                 <div>
                   <div className="w-11 h-11 rounded-xl bg-[#DCEFE7] text-[#174B43] flex items-center justify-center mb-5">
@@ -299,10 +381,10 @@ export function HomeView({
                   <button
                     type="button"
                     onClick={() => onSelectSpecialty(spec.slug)}
-                    className="text-sm font-semibold text-[#174B43] hover:underline inline-flex items-center gap-1.5 cursor-pointer"
+                    className="group text-sm font-semibold text-[#174B43] hover:underline inline-flex items-center gap-1.5 cursor-pointer"
                   >
                     Consulter la fiche
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                   </button>
                   <button
                     type="button"
@@ -312,7 +394,7 @@ export function HomeView({
                     Demander un RDV
                   </button>
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
         </div>
@@ -320,7 +402,13 @@ export function HomeView({
 
       {/* 3. FOCUS SUR LA NÉPHROLOGIE */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <div className="bg-[#174B43] text-white rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-stretch">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={VIEWPORT}
+          transition={{ duration: 0.55, ease: EASE }}
+          className="bg-[#174B43] text-white rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-stretch shadow-[0_20px_50px_rgba(23,75,67,0.14)]"
+        >
           <div className="lg:col-span-7 p-8 sm:p-12 flex flex-col justify-center">
             <p className="text-xs font-semibold text-[#DCEFE7] mb-3">
               03. Focus spécialité
@@ -334,14 +422,16 @@ export function HomeView({
                 : 'La Clinique EVA propose un service de néphrologie. Contactez le secrétariat pour confirmer les modalités et disponibilités.'}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onBookSpecialty('nephrologie')}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-[#174B43] text-sm font-semibold hover:bg-[#DCEFE7] transition-colors cursor-pointer"
               >
                 Demander un rendez-vous en néphrologie
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </motion.button>
               <button
                 type="button"
                 onClick={() => onSelectSpecialty('nephrologie')}
@@ -354,12 +444,18 @@ export function HomeView({
           <div className="lg:col-span-5 min-h-[260px] relative">
             <AmbientImage src={nephroImg.url} alt={nephroImg.alt} />
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* 4. SUIVI DE LA SANTÉ FÉMININE */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 lg:pb-20">
-        <div className="bg-white rounded-3xl border border-[#83A99A]/25 overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-stretch">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={VIEWPORT}
+          transition={{ duration: 0.55, ease: EASE }}
+          className="bg-white rounded-3xl border border-[#83A99A]/25 overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-stretch"
+        >
           <div className="lg:col-span-5 min-h-[280px] order-2 lg:order-1">
             <AmbientImage src={womensImg.url} alt={womensImg.alt} />
           </div>
@@ -376,29 +472,39 @@ export function HomeView({
               modalités et disponibilités.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onSelectSpecialty('gynecologie')}
                 className="px-5 py-2.5 rounded-full bg-[#DCEFE7] text-[#174B43] text-sm font-medium hover:bg-[#cde6dc] transition-colors cursor-pointer"
               >
                 Gynécologie
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 type="button"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onSelectSpecialty('consultations-prenatales')}
                 className="px-5 py-2.5 rounded-full bg-[#F5F8F6] border border-[#83A99A]/35 text-[#233B4A] text-sm font-medium hover:border-[#174B43] transition-colors cursor-pointer"
               >
                 Consultations prénatales
-              </button>
+              </motion.button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* 5. PRÉVENTION ET DÉPISTAGE */}
       <section className="bg-[#DCEFE7]/45 border-y border-[#83A99A]/25 py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mb-10">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VIEWPORT}
+            transition={{ duration: 0.45, ease: EASE }}
+            className="max-w-2xl mb-10"
+          >
             <p className="text-xs font-semibold text-[#174B43] mb-2">
               05. Prévention et dépistage
             </p>
@@ -409,10 +515,17 @@ export function HomeView({
               Contenus pédagogiques informatifs. Aucun diagnostic automatique ni
               recommandation thérapeutique personnalisée n’est réalisé en ligne.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-2xl border border-[#83A99A]/25 p-7 flex flex-col justify-between">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={VIEWPORT}
+              transition={{ duration: 0.45, ease: EASE }}
+              whileHover={{ y: -3 }}
+              className="bg-white rounded-2xl border border-[#83A99A]/25 p-7 flex flex-col justify-between transition-shadow hover:shadow-[0_14px_32px_rgba(23,75,67,0.07)]"
+            >
               <div>
                 <div className="w-11 h-11 rounded-xl bg-[#DCEFE7] text-[#174B43] flex items-center justify-center mb-4">
                   <HeartPulse className="w-5 h-5" />
@@ -430,17 +543,25 @@ export function HomeView({
                 <span className="text-xs text-[#233B4A]/65">
                   Sous réserve de validation médicale
                 </span>
-                <button
+                <motion.button
                   type="button"
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => onRequestPreventionInfo('depistage_hta')}
                   className="px-5 py-2.5 rounded-full bg-[#174B43] text-white text-sm font-medium hover:bg-[#123c35] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                 >
                   Demander des informations
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-white rounded-2xl border border-[#83A99A]/25 p-7 flex flex-col justify-between">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={VIEWPORT}
+              transition={{ duration: 0.45, delay: 0.08, ease: EASE }}
+              whileHover={{ y: -3 }}
+              className="bg-white rounded-2xl border border-[#83A99A]/25 p-7 flex flex-col justify-between transition-shadow hover:shadow-[0_14px_32px_rgba(23,75,67,0.07)]"
+            >
               <div>
                 <div className="w-11 h-11 rounded-xl bg-[#DCEFE7] text-[#174B43] flex items-center justify-center mb-4">
                   <Droplets className="w-5 h-5" />
@@ -457,18 +578,25 @@ export function HomeView({
                 <span className="text-xs text-[#233B4A]/65">
                   Sous réserve de validation médicale
                 </span>
-                <button
+                <motion.button
                   type="button"
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => onRequestPreventionInfo('depistage_diabete')}
                   className="px-5 py-2.5 rounded-full bg-[#174B43] text-white text-sm font-medium hover:bg-[#123c35] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                 >
                   Demander des informations
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
           </div>
 
-          <div className="mt-8 rounded-2xl overflow-hidden border border-[#83A99A]/25 bg-white grid grid-cols-1 md:grid-cols-12 items-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VIEWPORT}
+            transition={{ duration: 0.5, delay: 0.1, ease: EASE }}
+            className="mt-8 rounded-2xl overflow-hidden border border-[#83A99A]/25 bg-white grid grid-cols-1 md:grid-cols-12 items-center"
+          >
             <div className="md:col-span-5 h-52 md:h-60">
               <AmbientImage src={preventionImg.url} alt={preventionImg.alt} />
             </div>
@@ -482,15 +610,17 @@ export function HomeView({
                   suivi prénatal, l’hypertension et le diabète.
                 </p>
               </div>
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => onNavigate('conseils')}
                 className="px-5 py-2.5 rounded-full bg-[#DCEFE7] text-[#174B43] text-sm font-semibold hover:bg-[#cde6dc] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
               >
                 Lire les conseils santé
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -498,12 +628,20 @@ export function HomeView({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           <div className="lg:col-span-6">
-            <p className="text-xs font-semibold text-[#174B43] mb-2">
-              06. Nos engagements
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#174B43] tracking-tight">
-              Des repères simples pour votre sérénité
-            </h2>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={VIEWPORT}
+              transition={{ duration: 0.45, ease: EASE }}
+            >
+              <p className="text-xs font-semibold text-[#174B43] mb-2">
+                06. Nos engagements
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#174B43] tracking-tight">
+                Des repères simples pour votre sérénité
+              </h2>
+            </motion.div>
+
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
               {[
                 {
@@ -522,10 +660,15 @@ export function HomeView({
                   title: 'Orientation claire',
                   desc: 'Coordination simple entre médecine générale, spécialités, analyses et imagerie.',
                 },
-              ].map((item) => (
-                <div
+              ].map((item, idx) => (
+                <motion.div
                   key={item.title}
-                  className="bg-white rounded-2xl border border-[#83A99A]/25 p-5"
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={VIEWPORT}
+                  transition={{ duration: 0.45, delay: idx * 0.07, ease: EASE }}
+                  whileHover={{ y: -3 }}
+                  className="bg-white rounded-2xl border border-[#83A99A]/25 p-5 transition-shadow hover:shadow-[0_12px_28px_rgba(23,75,67,0.06)]"
                 >
                   <ShieldCheck className="w-5 h-5 text-[#174B43] mb-3" />
                   <h3 className="text-base font-semibold text-[#174B43]">
@@ -534,12 +677,18 @@ export function HomeView({
                   <p className="mt-1.5 text-sm text-[#233B4A]/80 leading-relaxed">
                     {item.desc}
                   </p>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
 
-          <div className="lg:col-span-6 bg-white rounded-3xl border border-[#83A99A]/25 p-7 sm:p-10 flex flex-col justify-between">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VIEWPORT}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="lg:col-span-6 bg-white rounded-3xl border border-[#83A99A]/25 p-7 sm:p-10 flex flex-col justify-between"
+          >
             <div>
               <p className="text-xs font-semibold text-[#174B43] mb-2">
                 07. Parcours de prise de rendez-vous
@@ -548,69 +697,72 @@ export function HomeView({
                 Comment fonctionne votre demande ?
               </h2>
               <ol className="mt-6 space-y-5">
-                <li className="flex gap-4">
-                  <span className="w-8 h-8 rounded-full bg-[#DCEFE7] text-[#174B43] text-xs font-bold flex items-center justify-center shrink-0 tabular-nums">
-                    01
-                  </span>
-                  <div>
-                    <h3 className="text-sm font-semibold text-[#174B43]">
-                      Formulaire simplifié et confidentiel
-                    </h3>
-                    <p className="text-sm text-[#233B4A]/80 mt-1">
-                      Choisissez votre spécialité, la date et le créneau
-                      souhaité sans transmettre de détails médicaux sensibles.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex gap-4">
-                  <span className="w-8 h-8 rounded-full bg-[#DCEFE7] text-[#174B43] text-xs font-bold flex items-center justify-center shrink-0 tabular-nums">
-                    02
-                  </span>
-                  <div>
-                    <h3 className="text-sm font-semibold text-[#174B43]">
-                      Réception immédiate d’une référence
-                    </h3>
-                    <p className="text-sm text-[#233B4A]/80 mt-1">
-                      Un code de suivi unique est généré. Votre demande est
-                      alors enregistrée au statut « En attente ».
-                    </p>
-                  </div>
-                </li>
-                <li className="flex gap-4">
-                  <span className="w-8 h-8 rounded-full bg-[#DCEFE7] text-[#174B43] text-xs font-bold flex items-center justify-center shrink-0 tabular-nums">
-                    03
-                  </span>
-                  <div>
-                    <h3 className="text-sm font-semibold text-[#174B43]">
-                      Confirmation par la Clinique EVA
-                    </h3>
-                    <p className="text-sm text-[#233B4A]/80 mt-1">
-                      Notre secrétariat valide votre créneau ou vous propose une
-                      nouvelle date adaptée. Aucun rendez-vous n’est définitif
-                      avant cette validation.
-                    </p>
-                  </div>
-                </li>
+                {[
+                  {
+                    step: '01',
+                    title: 'Formulaire simplifié et confidentiel',
+                    desc: 'Choisissez votre spécialité, la date et le créneau souhaité sans transmettre de détails médicaux sensibles.',
+                  },
+                  {
+                    step: '02',
+                    title: 'Réception immédiate d’une référence',
+                    desc: 'Un code de suivi unique est généré. Votre demande est alors enregistrée au statut « En attente ».',
+                  },
+                  {
+                    step: '03',
+                    title: 'Confirmation par la Clinique EVA',
+                    desc: 'Notre secrétariat valide votre créneau ou vous propose une nouvelle date adaptée. Aucun rendez-vous n’est définitif avant cette validation.',
+                  },
+                ].map((etape, idx) => (
+                  <motion.li
+                    key={etape.step}
+                    initial={{ opacity: 0, x: -12 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={VIEWPORT}
+                    transition={{ duration: 0.4, delay: idx * 0.1, ease: EASE }}
+                    className="flex gap-4"
+                  >
+                    <span className="w-8 h-8 rounded-full bg-[#DCEFE7] text-[#174B43] text-xs font-bold flex items-center justify-center shrink-0 tabular-nums">
+                      {etape.step}
+                    </span>
+                    <div>
+                      <h3 className="text-sm font-semibold text-[#174B43]">
+                        {etape.title}
+                      </h3>
+                      <p className="text-sm text-[#233B4A]/80 mt-1">
+                        {etape.desc}
+                      </p>
+                    </div>
+                  </motion.li>
+                ))}
               </ol>
             </div>
             <div className="mt-8 pt-6 border-t border-[#83A99A]/20">
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onBookSpecialty()}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#174B43] text-white text-sm font-medium hover:bg-[#123c35] transition-colors cursor-pointer"
               >
                 Faire une demande de rendez-vous
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* 8. FAQ */}
       <section className="bg-white border-y border-[#83A99A]/20 py-16 lg:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VIEWPORT}
+            transition={{ duration: 0.45, ease: EASE }}
+            className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10"
+          >
             <div>
               <p className="text-xs font-semibold text-[#174B43] mb-2">
                 08. Questions fréquentes
@@ -626,7 +778,7 @@ export function HomeView({
             >
               Voir les avis patients
             </button>
-          </div>
+          </motion.div>
 
           <div className="divide-y divide-[#83A99A]/20 border border-[#83A99A]/25 rounded-2xl bg-[#F5F8F6]/50">
             {data.faqs.map((faq) => {
@@ -642,17 +794,30 @@ export function HomeView({
                     <span className="text-base font-semibold text-[#174B43]">
                       {faq.question}
                     </span>
-                    <ChevronDown
-                      className={`w-5 h-5 text-[#174B43] shrink-0 transition-transform duration-200 ${
-                        isOpen ? 'rotate-180' : ''
-                      }`}
-                    />
+                    <motion.span
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={{ duration: 0.22, ease: EASE }}
+                      className="shrink-0 text-[#174B43]"
+                    >
+                      <ChevronDown className="w-5 h-5" />
+                    </motion.span>
                   </button>
-                  {isOpen && (
-                    <p className="mt-3 text-sm text-[#233B4A]/85 leading-relaxed pr-6">
-                      {faq.answer}
-                    </p>
-                  )}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key="faq-answer"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: EASE }}
+                        className="overflow-hidden"
+                      >
+                        <p className="mt-3 text-sm text-[#233B4A]/85 leading-relaxed pr-6">
+                          {faq.answer}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               );
             })}
@@ -661,7 +826,13 @@ export function HomeView({
       </section>
 
       {/* 9. CONTACT ET LOCALISATION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 lg:pt-20">
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={VIEWPORT}
+        transition={{ duration: 0.5, ease: EASE }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 lg:pt-20"
+      >
         <div className="mb-10">
           <p className="text-xs font-semibold text-[#174B43] mb-2">
             09. Contact et localisation
@@ -689,14 +860,18 @@ export function HomeView({
               </div>
 
               <div className="pt-4 border-t border-[#83A99A]/20 flex flex-wrap gap-3">
-                <a
+                <motion.a
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
                   href={`tel:${CLINIC_INFO.phoneLink}`}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#174B43] text-white text-sm font-medium hover:bg-[#123c35] transition-colors"
                 >
                   <Phone className="w-4 h-4" />
-                  <span className="tabular-nums">                  {CLINIC_INFO.phone}</span>
-                </a>
-                <a
+                  <span className="tabular-nums">{CLINIC_INFO.phone}</span>
+                </motion.a>
+                <motion.a
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
                   href={CLINIC_INFO.whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -704,7 +879,7 @@ export function HomeView({
                 >
                   <MessageCircle className="w-4 h-4" />
                   WhatsApp
-                </a>
+                </motion.a>
               </div>
             </div>
 
@@ -715,7 +890,7 @@ export function HomeView({
             <ContactFormCard />
           </div>
         </div>
-      </section>
+      </motion.section>
     </div>
   );
 }
