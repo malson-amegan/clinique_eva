@@ -6,27 +6,30 @@ declare global {
   var _postgresPool: Pool | undefined;
 }
 
-export const createPool = () => {
+// Sur Vercel : 1 connexion par instance serverless (Neon gère le pooling côté serveur)
+// En local : jusqu'à 10 connexions
+const MAX_CONNEXIONS = process.env.VERCEL ? 1 : 10;
+
+export const createPool = (): Pool => {
+  // Réutilise le pool existant entre deux appels de la même instance
   if (!global._postgresPool) {
     global._postgresPool = new Pool({
-      host: process.env.SQL_HOST,
+      host: process.env.SQL_HOST, // hôte "-pooler" de Neon
       user: process.env.SQL_USER,
       password: process.env.SQL_PASSWORD,
       database: process.env.SQL_DB_NAME,
-      ssl:
-        process.env.SQL_SSL === 'true'
-          ? { rejectUnauthorized: false }
-          : false,
-      max: 10,
-      connectionTimeoutMillis: 15000,
+      // SSL activé avec vérification du certificat (Neon l'exige)
+      ssl: process.env.SQL_SSL === 'true' ? { rejectUnauthorized: true } : false,
+      max: MAX_CONNEXIONS,
+      idleTimeoutMillis: 10_000, // ferme vite les connexions inactives
+      connectionTimeoutMillis: 15_000, // laisse le temps à Neon de se réveiller
     });
 
     global._postgresPool.on('error', (err) => {
-      console.error('Unexpected error on idle SQL pool client:', err);
+      console.error('Erreur inattendue sur une connexion inactive du pool SQL :', err);
     });
   }
   return global._postgresPool;
 };
 
-const pool = createPool();
-export const db = drizzle(pool, { schema });
+export const db = drizzle(createPool(), { schema });
