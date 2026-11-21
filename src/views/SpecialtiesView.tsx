@@ -1,9 +1,13 @@
+import { motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock } from 'lucide-react';
 import { AmbientImage } from '../components/AmbientImage';
 import { SpecialtyIcon } from '../components/SpecialtyIcon';
 import { getAmbientImage } from '../lib/images';
 import { CLINIC_INFO } from '../lib/clinicInfo';
 import type { Specialty } from '../types';
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+const VIEWPORT = { once: true, amount: 0.12 } as const;
 
 interface SpecialtiesViewProps {
   specialties: Specialty[];
@@ -25,18 +29,23 @@ export function SpecialtiesView({
   if (activeSpecialty) {
     const img = getAmbientImage(activeSpecialty.imageKey);
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: EASE }}
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16"
+      >
         <button
           type="button"
           onClick={() => onSelectSlug(null)}
-          className="inline-flex items-center gap-2 text-sm font-medium text-[#174B43] hover:underline mb-8 cursor-pointer"
+          className="group inline-flex items-center gap-2 text-sm font-medium text-[#174B43] hover:underline mb-8 cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           Retour au catalogue des spécialités
         </button>
 
-        <div className="bg-white rounded-3xl border border-[#83A99A]/25 overflow-hidden">
-          <div className="h-64 sm:h-80 w-full relative">
+        <div className="bg-white rounded-3xl border border-[#83A99A]/25 overflow-hidden shadow-[0_16px_44px_rgba(23,75,67,0.06)]">
+          <div className="h-64 sm:h-80 w-full relative overflow-hidden">
             <AmbientImage src={img.url} alt={activeSpecialty.title} />
             <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg text-[11px] text-[#233B4A]/80">
               {img.creditNote}
@@ -86,30 +95,39 @@ export function SpecialtiesView({
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onBookSpecialty(activeSpecialty.slug)}
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#174B43] text-white text-sm font-medium hover:bg-[#123c35] transition-colors cursor-pointer"
               >
                 Prendre rendez-vous en {activeSpecialty.title.toLowerCase()}
                 <ArrowRight className="w-4 h-4" />
-              </button>
-              <a
+              </motion.button>
+              <motion.a
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 href={`tel:${CLINIC_INFO.phoneLink}`}
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#DCEFE7] text-[#174B43] text-sm font-medium hover:bg-[#cde6dc] transition-colors"
               >
                 Appeler le {CLINIC_INFO.phone}
-              </a>
+              </motion.a>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-      <div className="max-w-3xl mb-12">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: EASE }}
+        className="max-w-3xl mb-12"
+      >
         <p className="text-xs font-semibold text-[#174B43] mb-2">
           Catalogue des spécialités médicales
         </p>
@@ -120,18 +138,27 @@ export function SpecialtiesView({
           Consultez chaque fiche spécialité pour connaître les modalités de
           prise en charge et soumettre une demande de rendez-vous adaptée.
         </p>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {specialties.map((spec) => {
+        {specialties.map((spec, idx) => {
           const img = getAmbientImage(spec.imageKey);
           return (
-            <article
+            <motion.article
               key={spec.id}
-              className="bg-white rounded-2xl border border-[#83A99A]/25 overflow-hidden flex flex-col justify-between hover:border-[#174B43]/40 transition-colors"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={VIEWPORT}
+              transition={{
+                duration: 0.45,
+                delay: Math.min(idx * 0.06, 0.3),
+                ease: EASE,
+              }}
+              whileHover={{ y: -4 }}
+              className="group bg-white rounded-2xl border border-[#83A99A]/25 overflow-hidden flex flex-col justify-between transition-colors hover:border-[#174B43]/40 hover:shadow-[0_14px_34px_rgba(23,75,67,0.08)]"
             >
               <div>
-                <div className="h-44 w-full">
+                <div className="h-44 w-full overflow-hidden">
                   <AmbientImage src={img.url} alt={spec.title} />
                 </div>
                 <div className="p-6">
@@ -162,17 +189,18 @@ export function SpecialtiesView({
                   className="text-sm font-semibold text-[#174B43] hover:underline inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   Découvrir la spécialité
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
                 </button>
-                <button
+                <motion.button
                   type="button"
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => onBookSpecialty(spec.slug)}
                   className="px-4 py-2 rounded-full bg-[#174B43] text-white text-xs font-medium hover:bg-[#123c35] transition-colors cursor-pointer"
                 >
                   Rendez-vous
-                </button>
+                </motion.button>
               </div>
-            </article>
+            </motion.article>
           );
         })}
       </div>

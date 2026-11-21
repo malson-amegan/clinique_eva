@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import { ArrowRight, MapPin, Phone, MessageCircle, Info } from 'lucide-react';
 import { AmbientImage } from '../components/AmbientImage';
 import { ClinicHours } from '../components/ClinicHours';
@@ -5,6 +6,9 @@ import clinicFacade from '../assets/images/clinique-eva-facade.jpeg';
 import clinicExterior from '../assets/images/clinique-eva-exterieur.jpeg';
 import { CLINIC_INFO } from '../lib/clinicInfo';
 import type { GalleryItem, InstitutionalPage } from '../types';
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+const VIEWPORT = { once: true, amount: 0.12 } as const;
 
 interface ClinicPresentationViewProps {
   institutional: InstitutionalPage[];
@@ -22,7 +26,12 @@ export function ClinicPresentationView({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-16">
       {/* Header */}
-      <div className="max-w-3xl">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: EASE }}
+        className="max-w-3xl"
+      >
         <p className="text-xs font-semibold text-[#174B43] mb-2">
           La Clinique EVA · Agoè Démakpoé, Lomé
         </p>
@@ -33,14 +42,23 @@ export function ClinicPresentationView({
           Une structure de santé de proximité pensée pour l’écoute, la clarté
           des informations et un accompagnement attentif des patients à Lomé.
         </p>
-      </div>
+      </motion.div>
 
       {/* Institutional CMS Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {institutional.map((item, idx) => (
-          <article
+          <motion.article
             key={item.id}
-            className="bg-white rounded-2xl border border-[#83A99A]/25 p-7 flex flex-col justify-between"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VIEWPORT}
+            transition={{
+              duration: 0.45,
+              delay: Math.min(idx * 0.06, 0.25),
+              ease: EASE,
+            }}
+            whileHover={{ y: -3 }}
+            className="bg-white rounded-2xl border border-[#83A99A]/25 p-7 flex flex-col justify-between transition-shadow hover:shadow-[0_12px_30px_rgba(23,75,67,0.06)]"
           >
             <div>
               <div className="flex items-center justify-between gap-3 text-xs text-[#233B4A]/65 mb-3">
@@ -60,11 +78,17 @@ export function ClinicPresentationView({
                 {item.body}
               </p>
             </div>
-          </article>
+          </motion.article>
         ))}
 
         {/* Verified Practical Information Card */}
-        <article className="bg-[#174B43] text-white rounded-2xl p-7 flex flex-col justify-between">
+        <motion.article
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={VIEWPORT}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="bg-[#174B43] text-white rounded-2xl p-7 flex flex-col justify-between shadow-[0_16px_40px_rgba(23,75,67,0.12)]"
+        >
           <div>
             <p className="text-xs font-semibold text-[#DCEFE7] mb-2">
               Repères vérifiés
@@ -102,29 +126,47 @@ export function ClinicPresentationView({
             </ul>
           </div>
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap gap-3">
-            <button
+            <motion.button
               type="button"
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.97 }}
               onClick={onBook}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-[#174B43] text-sm font-semibold hover:bg-[#DCEFE7] transition-colors cursor-pointer"
             >
               Prendre rendez-vous
               <ArrowRight className="w-4 h-4" />
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               type="button"
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.97 }}
               onClick={onContact}
               className="px-5 py-2.5 rounded-full border border-white/30 text-white text-sm font-medium hover:bg-white/10 transition-colors cursor-pointer"
             >
               Nous contacter
-            </button>
+            </motion.button>
           </div>
-        </article>
-        <ClinicHours />
+        </motion.article>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={VIEWPORT}
+          transition={{ duration: 0.5, delay: 0.08, ease: EASE }}
+        >
+          <ClinicHours />
+        </motion.div>
       </div>
 
       {/* Gallery */}
       <section>
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={VIEWPORT}
+          transition={{ duration: 0.45, ease: EASE }}
+          className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8"
+        >
           <div>
             <h2 className="text-2xl font-bold text-[#174B43] tracking-tight">
               La Clinique EVA en images
@@ -136,7 +178,7 @@ export function ClinicPresentationView({
               </span>
             </p>
           </div>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
@@ -150,30 +192,44 @@ export function ClinicPresentationView({
               title: 'Façade de la Clinique EVA',
               alt: 'Vue de la façade de la Clinique EVA à Agoè Démakpoé',
             },
-          ].map((photo) => (
-            <figure
+          ].map((photo, idx) => (
+            <motion.figure
               key={photo.title}
-              className="overflow-hidden rounded-2xl border border-[#83A99A]/25 bg-white"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={VIEWPORT}
+              transition={{ duration: 0.45, delay: idx * 0.07, ease: EASE }}
+              whileHover={{ y: -4 }}
+              className="group overflow-hidden rounded-2xl border border-[#83A99A]/25 bg-white transition-shadow hover:shadow-[0_14px_32px_rgba(23,75,67,0.08)]"
             >
-              <div className="h-56 w-full">
+              <div className="h-56 w-full overflow-hidden">
                 <img
                   src={photo.src}
                   alt={photo.alt}
                   loading="lazy"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                 />
               </div>
               <figcaption className="p-5 text-sm font-semibold text-[#174B43]">
                 {photo.title}
               </figcaption>
-            </figure>
+            </motion.figure>
           ))}
-          {gallery.map((item) => (
-            <div
+          {gallery.map((item, idx) => (
+            <motion.div
               key={item.id}
-              className="bg-white rounded-2xl border border-[#83A99A]/25 overflow-hidden flex flex-col"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={VIEWPORT}
+              transition={{
+                duration: 0.45,
+                delay: Math.min((idx + 2) * 0.06, 0.3),
+                ease: EASE,
+              }}
+              whileHover={{ y: -4 }}
+              className="group bg-white rounded-2xl border border-[#83A99A]/25 overflow-hidden flex flex-col transition-shadow hover:shadow-[0_14px_32px_rgba(23,75,67,0.08)]"
             >
-              <div className="h-56 w-full">
+              <div className="h-56 w-full overflow-hidden">
                 <AmbientImage src={item.imageUrl} alt={item.title} />
               </div>
               <div className="p-5">
@@ -184,7 +240,7 @@ export function ClinicPresentationView({
                   {item.caption}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
